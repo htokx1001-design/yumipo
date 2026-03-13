@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>お酒価格チェッカー β版</title>
+  <style>
+    :root {
+      --bg: #f4f4f6;
+      --card: #ffffff;
+      --text: #222;
+      --sub: #666;
+      --line: #d9d9de;
+      --accent: #007aff;
+      --good: #157a2c;
+      --warn: #b00020;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", sans-serif;
+      padding: 16px;
+    }
+
+    .wrap {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 0 0 8px;
+    }
+
+    .lead {
+      margin: 0 0 16px;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    select,
+    input,
+    button {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 14px 12px;
+      font-size: 16px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    button {
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.sub {
+      background: #8e8e93;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .result-block {
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    .big {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.5;
+      margin: 10px 0;
+    }
+
+    .good {
+      color: var(--good);
+      font-weight: 800;
+    }
+
+    .warn {
+      color: var(--warn);
+      font-weight: 800;
+    }
+
+    .muted {
+      color: var(--sub);
+      font-size: 14px;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 12px 0;
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: #245bb8;
+      margin-bottom: 10px;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--sub);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>お酒価格チェッカー β版</h1>
+    <p class="lead">
+      350mlを先に見て、500mlの損益分岐価格を出す用の簡易ツールです。<br>
+      商品によっては保存のみ・比較のみで動作が変わります。
+    </p>
+
+    <div class="card">
+      <div class="section-title">入力</div>
+
+      <label for="store">スーパー</label>
+      <select id="store"></select>
+
+      <label for="category">種類</label>
+      <select id="category"></select>
+
+      <div id="itemWrap">
+        <label for="item">味 / 商品</label>
+        <select id="item"></select>
+      </div>
+
+      <label for="taxType">価格表示</label>
+      <select id="taxType">
+        <option value="taxIncluded">税込を入力</option>
+        <option value="taxExcluded">税抜を入力</option>
+      </select>
+
+      <label for="taxRate">税率（%）</label>
+      <input id="taxRate" type="number" inputmode="decimal" value="10" step="0.1" />
+
+      <div id="price350Wrap">
+        <label for="price350">350mlの価格（円）</label>
+        <input id="price350" type="number" inputmode="decimal" placeholder="例：108" />
+      </div>
+
+      <div id="priceAnyWrap" class="hidden">
+        <label for="priceAny">価格（円）</label>
+        <input id="priceAny" type="number" inputmode="decimal" placeholder="例：998" />
+      </div>
+
+      <div id="price500Wrap">
+        <label for="price500">500mlの実売価格（任意）</label>
+        <input id="price500" type="number" inputmode="decimal" placeholder="入れるとその場で比較できます" />
+      </div>
+
+      <button id="calcBtn">計算 / 保存する</button>
+      <button id="clearBtn" class="sub" type="button">価格入力だけ消す</button>
+
+      <div class="small">
+        ・「ほんしぼ / 氷結 / -196 / ドライ」→ 比較あり、保存あり<br>
+        ・「その他」→ 比較あり、保存なし<br>
+        ・「わるやつ」→ 比較なし、保存あり
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">結果</div>
+      <div id="result" class="result-block">ここに結果が表示されます。</div>
+    </div>
+  </div>
+
+  <script>
+    const stores = [
+      "サンプラ",
+      "ライフ",
+      "ドンキ",
+      "ベス",
+      "万代",
+      "油甚",
+      "サンディ",
+      "コープ"
+    ];
+
+    const categories = {
+      "ほんしぼ": {
+        mode: "compare-save",
+        items: ["グレフル", "レモン", "Pグレフル", "オレンジ"]
+      },
+      "氷結": {
+        mode: "compare-save",
+        items: ["グレフル", "レモン", "ゆず", "シャルドネ"]
+      },
+      "-196": {
+        mode: "compare-save",
+        items: ["レモン", "Sマスカット", "ラフランス", "Vオレンジ", "Pグレフル"]
+      },
+      "ドライ": {
+        mode: "compare-save",
+        items: []
+      },
+      "その他": {
+        mode: "compare-only",
+        items: []
+      },
+      "わるやつ": {
+        mode: "save-only",
+        items: ["濃いめのグレフル1.8L", "タコハイ500ml", "氷彩500ml", "ウォッカ"]
+      }
+    };
+
+    const storeEl = document.getElementById("store");
+    const categoryEl = document.getElementById("category");
+    const itemWrapEl = document.getElementById("itemWrap");
+    const itemEl = document.getElementById("item");
+    const taxTypeEl = document.getElementById("taxType");
+    const taxRateEl = document.getElementById("taxRate");
+    const price350WrapEl = document.getElementById("price350Wrap");
+    const price350El = document.getElementById("price350");
+    const price500WrapEl = document.getElementById("price500Wrap");
+    const price500El = document.getElementById("price500");
+    const priceAnyWrapEl = document.getElementById("priceAnyWrap");
+    const priceAnyEl = document.getElementById("priceAny");
+    const calcBtnEl = document.getElementById("calcBtn");
+    const clearBtnEl = document.getElementById("clearBtn");
+    const resultEl = document.getElementById("result");
+
+    const LAST_SELECTION_KEY = "sakeTool_lastSelection_v1";
+
+    function round2(num) {
+      return Math.round(num * 100) / 100;
+    }
+
+    function toTaxIncluded(price, taxType, taxRate) {
+      if (taxType === "taxIncluded") return price;
+      return price * (1 + taxRate / 100);
+    }
+
+    function populateStores() {
+      storeEl.innerHTML = stores.map(s => `<option value="${s}">${s}</option>`).join("");
+    }
+
+    function populateCategories() {
+      categoryEl.innerHTML = Object.keys(categories)
+        .map(c => `<option value="${c}">${c}</option>`)
+        .join("");
+    }
+
+    function populateItems() {
+      const category = categoryEl.value;
+      const items = categories[category].items;
+
+      if (!items || items.length === 0) {
+        itemEl.innerHTML = "";
+        itemWrapEl.classList.add("hidden");
+      } else {
+        itemEl.innerHTML = items.map(i => `<option value="${i}">${i}</option>`).join("");
+        itemWrapEl.classList.remove("hidden");
+      }
+    }
+
+    function updateModeUI() {
+      const category = categoryEl.value;
+      const mode = categories[category].mode;
+
+      if (mode === "save-only") {
+        price350WrapEl.classList.add("hidden");
+        price500WrapEl.classList.add("hidden");
+        priceAnyWrapEl.classList.remove("hidden");
+      } else {
+        price350WrapEl.classList.remove("hidden");
+        price500WrapEl.classList.remove("hidden");
+        priceAnyWrapEl.classList.add("hidden");
+      }
+    }
+
+    function getSelectedItemName() {
+      const category = categoryEl.value;
+      const items = categories[category].items;
+      if (!items || items.length === 0) return "";
+      return itemEl.value;
+    }
+
+    function getRecordKey(store, category, itemName) {
+      return `sakeTool_record_v1__${store}__${category}__${itemName || "noitem"}`;
+    }
+
+    function saveLastSelection() {
+      const data = {
+        store: storeEl.value,
+        category: categoryEl.value,
+        item: getSelectedItemName(),
+        taxType: taxTypeEl.value,
+        taxRate: taxRateEl.value
+      };
+      localStorage.setItem(LAST_SELECTION_KEY, JSON.stringify(data));
+    }
+
+    function restoreLastSelection() {
+      const raw = localStorage.getItem(LAST_SELECTION_KEY);
+      if (!raw) return;
+
+      try {
+        const data = JSON.parse(raw);
+
+        if (data.store && stores.includes(data.store)) {
+          storeEl.value = data.store;
+        }
+
+        if (data.category && categories[data.category]) {
+          categoryEl.value = data.category;
+        }
+
+        populateItems();
+
+        const items = categories[categoryEl.value].items;
+        if (data.item && items.includes(data.item)) {
+          itemEl.value = data.item;
+        }
+
+        if (data.taxType) {
+          taxTypeEl.value = data.taxType;
+        }
+
+        if (data.taxRate) {
+          taxRateEl.value = data.taxRate;
+        }
+      } catch (e) {
+        console.error("前回選択の復元に失敗:", e);
+      }
+    }
+
+    function readRecord(store, category, itemName) {
+      const key = getRecordKey(store, category, itemName);
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+
+    function saveRecord(store, category, itemName, priceTaxIn) {
+      const key = getRecordKey(store, category, itemName);
+      const current = readRecord(store, category, itemName);
+
+      const next = current || {
+        min: priceTaxIn,
+        max: priceTaxIn,
+        updatedAt: new Date().toISOString()
+      };
+
+      next.min = Math.min(next.min, priceTaxIn);
+      next.max = Math.max(next.max, priceTaxIn);
+      next.updatedAt = new Date().toISOString();
+
+      localStorage.setItem(key, JSON.stringify(next));
+      return next;
+    }
+
+    function formatRecord(record) {
+      if (!record) {
+        return `
+          <div>過去最安：記録なし</div>
+          <div>過去最高：記録なし</div>
+        `;
+      }
+
+      return `
+        <div>過去最安：${round2(record.min)} 円</div>
+        <div>過去最高：${round2(record.max)} 円</div>
+      `;
+    }
+
+    function buildCompareResult() {
+      const store = storeEl.value;
+      const category = categoryEl.value;
+      const itemName = getSelectedItemName();
+      const mode = categories[category].mode;
+      const taxType = taxTypeEl.value;
+      const taxRate = parseFloat(taxRateEl.value);
+      const price350 = parseFloat(price350El.value);
+      const price500 = parseFloat(price500El.value);
+
+      if (isNaN(taxRate) || isNaN(price350) || price350 <= 0) {
+        resultEl.innerHTML = `<span class="warn">350mlの価格と税率を正しく入力してください。</span>`;
+        return;
+      }
+
+      const price350TaxIn = toTaxIncluded(price350, taxType, taxRate);
+      const unit350 = price350TaxIn / 350;
+      const per100350 = unit350 * 100;
+      const breakEven500 = unit350 * 500;
+
+      let record = null;
+      if (mode === "compare-save") {
+        record = saveRecord(store, category, itemName, price350TaxIn);
+      }
+
+      let compareNowHtml = "";
+      if (!isNaN(price500) && price500 > 0) {
+        const price500TaxIn = toTaxIncluded(price500, taxType, taxRate);
+        if (price500TaxIn <= breakEven500) {
+          compareNowHtml = `
+            <div class="divider"></div>
+            <div class="big good">500mlは割安です</div>
+            <div>500ml 実質価格：${round2(price500TaxIn)} 円</div>
+          `;
+        } else {
+          compareNowHtml = `
+            <div class="divider"></div>
+            <div class="big warn">350mlの方が割安です</div>
+            <div>500ml 実質価格：${round2(price500TaxIn)} 円</div>
+          `;
+        }
+      }
+
+      let saveNotice = "";
+      if (mode === "compare-only") {
+        saveNotice = `<div class="pill">その他：比較のみ（保存なし）</div>`;
+      } else {
+        saveNotice = `<div class="pill">保存対象</div>`;
+      }
+
+      resultEl.innerHTML = `
+        ${saveNotice}
+        <div><strong>${store}</strong> / <strong>${category}</strong>${itemName ? " / <strong>" + itemName + "</strong>" : ""}</div>
+        <div class="divider"></div>
+        <div>350ml 実質価格：${round2(price350TaxIn)} 円</div>
+        <div>100mlあたり：${round2(per100350)} 円</div>
+        <div class="big">500mlが <span class="good">${round2(breakEven500)} 円以下</span> なら割安です</div>
+        ${compareNowHtml}
+        <div class="divider"></div>
+        ${formatRecord(record)}
+      `;
+    }
+
+    function buildSaveOnlyResult() {
+      const store = storeEl.value;
+      const category = categoryEl.value;
+      const itemName = getSelectedItemName();
+      const taxType = taxTypeEl.value;
+      const taxRate = parseFloat(taxRateEl.value);
+      const priceAny = parseFloat(priceAnyEl.value);
+
+      if (!itemName) {
+        resultEl.innerHTML = `<span class="warn">商品を選択してください。</span>`;
+        return;
+      }
+
+      if (isNaN(taxRate) || isNaN(priceAny) || priceAny <= 0) {
+        resultEl.innerHTML = `<span class="warn">価格と税率を正しく入力してください。</span>`;
+        return;
+      }
+
+      const priceTaxIn = toTaxIncluded(priceAny, taxType, taxRate);
+      const record = saveRecord(store, category, itemName, priceTaxIn);
+
+      resultEl.innerHTML = `
+        <div class="pill">わるやつ：保存のみ</div>
+        <div><strong>${store}</strong> / <strong>${category}</strong> / <strong>${itemName}</strong></div>
+        <div class="divider"></div>
+        <div>今回の実質価格：${round2(priceTaxIn)} 円</div>
+        <div class="divider"></div>
+        ${formatRecord(record)}
+      `;
+    }
+
+    function execute() {
+      saveLastSelection();
+
+      const category = categoryEl.value;
+      const mode = categories[category].mode;
+
+      if (mode === "save-only") {
+        buildSaveOnlyResult();
+      } else {
+        buildCompareResult();
+      }
+    }
+
+    function clearPrices() {
+      price350El.value = "";
+      price500El.value = "";
+      priceAnyEl.value = "";
+      resultEl.innerHTML = "ここに結果が表示されます。";
+    }
+
+    function handleCategoryChange() {
+      populateItems();
+      updateModeUI();
+      saveLastSelection();
+    }
+
+    function handleItemChange() {
+      saveLastSelection();
+    }
+
+    function init() {
+      populateStores();
+      populateCategories();
+      populateItems();
+      restoreLastSelection();
+      populateItems();
+      updateModeUI();
+
+      categoryEl.addEventListener("change", handleCategoryChange);
+      itemEl.addEventListener("change", handleItemChange);
+      storeEl.addEventListener("change", saveLastSelection);
+      taxTypeEl.addEventListener("change", saveLastSelection);
+      taxRateEl.addEventListener("change", saveLastSelection);
+
+      calcBtnEl.addEventListener("click", execute);
+      clearBtnEl.addEventListener("click", clearPrices);
+    }
+
+    init();
+  </script>
+</body>
+</html>
