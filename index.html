@@ -3,17 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>お酒価格チェッカー β版</title>
+  <title>酒いくらメーター</title>
   <style>
     :root {
-      --bg: #f4f4f6;
-      --card: #ffffff;
-      --text: #222;
-      --sub: #666;
-      --line: #d9d9de;
-      --accent: #007aff;
-      --good: #157a2c;
-      --warn: #b00020;
+      --bg: #ffd9e6;
+      --card: #fffafc;
+      --card-border: #ffc2d6;
+      --text: #4a2a35;
+      --sub: #8a6170;
+      --accent: #ff4f87;
+      --accent-dark: #e63f74;
+      --result: #ff8a3d;
+      --good: #d93a6a;
+      --line: #f3bfd0;
+      --shadow: rgba(219, 94, 139, 0.18);
     }
 
     * {
@@ -22,10 +25,19 @@
 
     body {
       margin: 0;
-      background: var(--bg);
+      padding: 14px;
+      background:
+        radial-gradient(circle at top left, #ffeaf1 0%, transparent 35%),
+        radial-gradient(circle at top right, #ffd7e5 0%, transparent 30%),
+        linear-gradient(180deg, #ffd9e6 0%, #ffcfe0 100%);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", sans-serif;
-      padding: 16px;
+      font-family:
+        "Hiragino Maru Gothic ProN",
+        "Hiragino Sans",
+        "Yu Gothic UI",
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
     }
 
     .wrap {
@@ -33,135 +45,157 @@
       margin: 0 auto;
     }
 
-    h1 {
-      font-size: 24px;
-      margin: 0 0 8px;
+    .title-box {
+      text-align: center;
+      margin: 4px 0 12px;
     }
 
-    .lead {
-      margin: 0 0 16px;
-      color: var(--sub);
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.2;
+      color: #d5336c;
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 0 rgba(255,255,255,0.55);
+    }
+
+    .subtitle {
+      margin-top: 4px;
       font-size: 14px;
-      line-height: 1.6;
+      color: #9b5a72;
+      font-weight: 700;
+      letter-spacing: 0.04em;
     }
 
     .card {
       background: var(--card);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0 0 12px;
+      border: 2px solid var(--card-border);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 5px 14px var(--shadow);
+      margin-bottom: 12px;
     }
 
     label {
       display: block;
       font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 6px;
+      font-weight: 800;
+      margin: 0 0 6px;
+      color: #8b4560;
     }
 
     select,
     input,
     button {
       width: 100%;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      padding: 14px 12px;
+      border-radius: 14px;
       font-size: 16px;
-      margin-bottom: 12px;
+      padding: 13px 12px;
+      margin: 0 0 12px;
+    }
+
+    select,
+    input {
+      border: 2px solid #f1bfd0;
       background: #fff;
+      color: var(--text);
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    select:focus,
+    input:focus {
+      outline: none;
+      border-color: #ff91b4;
+      box-shadow: 0 0 0 3px rgba(255, 145, 180, 0.18);
     }
 
     button {
       border: none;
-      background: var(--accent);
+      background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
       color: #fff;
-      font-weight: 700;
+      font-weight: 900;
+      letter-spacing: 0.04em;
       cursor: pointer;
+      box-shadow: 0 5px 12px rgba(255, 79, 135, 0.28);
+      margin-bottom: 0;
     }
 
-    button.sub {
-      background: #8e8e93;
+    button:active {
+      transform: translateY(1px);
     }
 
     .hidden {
       display: none;
     }
 
-    .result-block {
-      line-height: 1.8;
-      font-size: 16px;
-    }
-
-    .big {
-      font-size: 22px;
-      font-weight: 800;
-      line-height: 1.5;
-      margin: 10px 0;
-    }
-
-    .good {
-      color: var(--good);
-      font-weight: 800;
-    }
-
-    .warn {
-      color: var(--warn);
-      font-weight: 800;
-    }
-
-    .muted {
-      color: var(--sub);
-      font-size: 14px;
+    .result-head {
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.7;
+      margin-bottom: 8px;
+      color: #7d3a53;
     }
 
     .divider {
-      height: 1px;
-      background: var(--line);
-      margin: 12px 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, #f3bfd0 12%, #f3bfd0 88%, transparent 100%);
+      margin: 10px 0;
     }
 
-    .pill {
-      display: inline-block;
-      font-size: 12px;
+    .main-result {
+      text-align: center;
+      font-size: 26px;
+      line-height: 1.35;
+      font-weight: 900;
+      color: var(--result);
+      margin: 8px 0 4px;
+      text-shadow: 0 2px 0 rgba(255,255,255,0.5);
+    }
+
+    .update-message {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--good);
+      margin: 8px 0;
+    }
+
+    .small-result {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .price-line {
       font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: #eef4ff;
-      color: #245bb8;
-      margin-bottom: 10px;
+      color: #7b4960;
     }
 
-    .grid2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+    .save-mode {
+      text-align: center;
+      font-size: 22px;
+      line-height: 1.4;
+      font-weight: 900;
+      color: var(--result);
+      margin: 6px 0 2px;
     }
 
-    .small {
-      font-size: 13px;
+    .note {
+      text-align: center;
+      font-size: 14px;
       color: var(--sub);
-      line-height: 1.6;
+      margin-top: 4px;
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>お酒価格チェッカー β版</h1>
-    <p class="lead">
-      350mlを先に見て、500mlの損益分岐価格を出す用の簡易ツールです。<br>
-      商品によっては保存のみ・比較のみで動作が変わります。
-    </p>
+    <div class="title-box">
+      <h1>🍺 酒いくらメーター 🍋</h1>
+      <div class="subtitle">〜 ロングは敵か味方か 〜</div>
+    </div>
 
     <div class="card">
-      <div class="section-title">入力</div>
-
       <label for="store">スーパー</label>
       <select id="store"></select>
 
@@ -175,41 +209,30 @@
 
       <label for="taxType">価格表示</label>
       <select id="taxType">
-        <option value="taxIncluded">税込を入力</option>
-        <option value="taxExcluded">税抜を入力</option>
+        <option value="taxIncluded">税込</option>
+        <option value="taxExcluded">税抜</option>
       </select>
 
-      <label for="taxRate">税率（%）</label>
-      <input id="taxRate" type="number" inputmode="decimal" value="10" step="0.1" />
-
       <div id="price350Wrap">
-        <label for="price350">350mlの価格（円）</label>
+        <label for="price350">350の価格</label>
         <input id="price350" type="number" inputmode="decimal" placeholder="例：108" />
       </div>
 
+      <div id="price500Wrap">
+        <label for="price500">ロングの価格（任意）</label>
+        <input id="price500" type="number" inputmode="decimal" placeholder="入れるとその場で比較できる" />
+      </div>
+
       <div id="priceAnyWrap" class="hidden">
-        <label for="priceAny">価格（円）</label>
+        <label for="priceAny">価格</label>
         <input id="priceAny" type="number" inputmode="decimal" placeholder="例：998" />
       </div>
 
-      <div id="price500Wrap">
-        <label for="price500">500mlの実売価格（任意）</label>
-        <input id="price500" type="number" inputmode="decimal" placeholder="入れるとその場で比較できます" />
-      </div>
-
-      <button id="calcBtn">計算 / 保存する</button>
-      <button id="clearBtn" class="sub" type="button">価格入力だけ消す</button>
-
-      <div class="small">
-        ・「ほんしぼ / 氷結 / -196 / ドライ」→ 比較あり、保存あり<br>
-        ・「その他」→ 比較あり、保存なし<br>
-        ・「わるやつ」→ 比較なし、保存あり
-      </div>
+      <button id="calcBtn" type="button">計算 / 保存</button>
     </div>
 
     <div class="card">
-      <div class="section-title">結果</div>
-      <div id="result" class="result-block">ここに結果が表示されます。</div>
+      <div id="result" class="small-result">ここに結果がでます。</div>
     </div>
   </div>
 
@@ -228,15 +251,15 @@
     const categories = {
       "ほんしぼ": {
         mode: "compare-save",
-        items: ["グレフル", "レモン", "Pグレフル", "オレンジ"]
+        items: ["グレフル", "レモン", "Pグレフル", "オレンジ", "その他"]
       },
       "氷結": {
         mode: "compare-save",
-        items: ["グレフル", "レモン", "ゆず", "シャルドネ"]
+        items: ["グレフル", "レモン", "ゆず", "シャルドネ", "その他"]
       },
       "-196": {
         mode: "compare-save",
-        items: ["レモン", "Sマスカット", "ラフランス", "Vオレンジ", "Pグレフル"]
+        items: ["レモン", "Sマスカット", "ラフランス", "Vオレンジ", "Pグレフル", "その他"]
       },
       "ドライ": {
         mode: "compare-save",
@@ -257,7 +280,6 @@
     const itemWrapEl = document.getElementById("itemWrap");
     const itemEl = document.getElementById("item");
     const taxTypeEl = document.getElementById("taxType");
-    const taxRateEl = document.getElementById("taxRate");
     const price350WrapEl = document.getElementById("price350Wrap");
     const price350El = document.getElementById("price350");
     const price500WrapEl = document.getElementById("price500Wrap");
@@ -265,27 +287,32 @@
     const priceAnyWrapEl = document.getElementById("priceAnyWrap");
     const priceAnyEl = document.getElementById("priceAny");
     const calcBtnEl = document.getElementById("calcBtn");
-    const clearBtnEl = document.getElementById("clearBtn");
     const resultEl = document.getElementById("result");
 
-    const LAST_SELECTION_KEY = "sakeTool_lastSelection_v1";
+    const LAST_SELECTION_KEY = "sakeMeter_lastSelection_v2";
+    const RECORD_PREFIX = "sakeMeter_record_v2__";
+    const TAX_RATE = 10;
 
     function round2(num) {
       return Math.round(num * 100) / 100;
     }
 
-    function toTaxIncluded(price, taxType, taxRate) {
+    function formatPrice(num) {
+      return round2(num).toFixed(2).replace(/\.00$/, "");
+    }
+
+    function toTaxIncluded(price, taxType) {
       if (taxType === "taxIncluded") return price;
-      return price * (1 + taxRate / 100);
+      return price * 1.1;
     }
 
     function populateStores() {
-      storeEl.innerHTML = stores.map(s => `<option value="${s}">${s}</option>`).join("");
+      storeEl.innerHTML = stores.map(store => `<option value="${store}">${store}</option>`).join("");
     }
 
     function populateCategories() {
       categoryEl.innerHTML = Object.keys(categories)
-        .map(c => `<option value="${c}">${c}</option>`)
+        .map(category => `<option value="${category}">${category}</option>`)
         .join("");
     }
 
@@ -294,12 +321,13 @@
       const items = categories[category].items;
 
       if (!items || items.length === 0) {
-        itemEl.innerHTML = "";
         itemWrapEl.classList.add("hidden");
-      } else {
-        itemEl.innerHTML = items.map(i => `<option value="${i}">${i}</option>`).join("");
-        itemWrapEl.classList.remove("hidden");
+        itemEl.innerHTML = "";
+        return;
       }
+
+      itemWrapEl.classList.remove("hidden");
+      itemEl.innerHTML = items.map(item => `<option value="${item}">${item}</option>`).join("");
     }
 
     function updateModeUI() {
@@ -324,8 +352,201 @@
       return itemEl.value;
     }
 
-    function getRecordKey(store, category, itemName) {
-      return `sakeTool_record_v1__${store}__${category}__${itemName || "noitem"}`;
+    function shouldSave(category, itemName) {
+      if (category === "その他") return false;
+      if (category === "わるやつ") return true;
+      if (itemName === "その他") return false;
+      return true;
+    }
+
+    function getRecordKey(category, itemName) {
+      return `${RECORD_PREFIX}${category}__${itemName || "noitem"}`;
+    }
+
+    function readRecord(category, itemName) {
+      const key = getRecordKey(category, itemName);
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+
+    function saveRecord(category, itemName, store, priceTaxIn) {
+      const key = getRecordKey(category, itemName);
+      const current = readRecord(category, itemName);
+
+      let isNewMin = false;
+
+      if (!current) {
+        const first = {
+          min: priceTaxIn,
+          minStore: store,
+          max: priceTaxIn,
+          maxStore: store,
+          updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem(key, JSON.stringify(first));
+        return { record: first, isNewMin: true };
+      }
+
+      const next = { ...current };
+
+      if (priceTaxIn < next.min) {
+        next.min = priceTaxIn;
+        next.minStore = store;
+        isNewMin = true;
+      }
+
+      if (priceTaxIn > next.max) {
+        next.max = priceTaxIn;
+        next.maxStore = store;
+      }
+
+      next.updatedAt = new Date().toISOString();
+      localStorage.setItem(key, JSON.stringify(next));
+
+      return { record: next, isNewMin };
+    }
+
+    function formatRecordHtml(record, saveEnabled) {
+      if (!saveEnabled) {
+        return `
+          <div class="divider"></div>
+          <div class="small-result">記録はしないモードです。</div>
+        `;
+      }
+
+      if (!record) {
+        return `
+          <div class="divider"></div>
+          <div class="small-result">
+            <div>過去最安：記録なし</div>
+            <div>過去最高：記録なし</div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="divider"></div>
+        <div class="small-result">
+          <div>過去最安：${formatPrice(record.min)}円　${record.minStore}</div>
+          <div>過去最高：${formatPrice(record.max)}円　${record.maxStore}</div>
+        </div>
+      `;
+    }
+
+    function buildHeaderHtml(store, category, itemName) {
+      const itemPart = itemName ? ` / ${itemName}` : "";
+      return `<div class="result-head">${store} / ${category}${itemPart}</div>`;
+    }
+
+    function buildCompareResult() {
+      const store = storeEl.value;
+      const category = categoryEl.value;
+      const itemName = getSelectedItemName();
+      const taxType = taxTypeEl.value;
+      const price350 = parseFloat(price350El.value);
+      const price500 = parseFloat(price500El.value);
+
+      if (isNaN(price350) || price350 <= 0) {
+        resultEl.innerHTML = `<div class="small-result">350の価格をちゃんと入れてください。</div>`;
+        return;
+      }
+
+      const price350TaxIn = toTaxIncluded(price350, taxType);
+      const breakEven500 = (price350TaxIn / 350) * 500;
+
+      const saveEnabled = shouldSave(category, itemName);
+      let record = readRecord(category, itemName);
+      let isNewMin = false;
+
+      if (saveEnabled) {
+        const saved = saveRecord(category, itemName, store, price350TaxIn);
+        record = saved.record;
+        isNewMin = saved.isNewMin;
+      }
+
+      let compareNowHtml = "";
+      if (!isNaN(price500) && price500 > 0) {
+        const price500TaxIn = toTaxIncluded(price500, taxType);
+        if (price500TaxIn <= breakEven500) {
+          compareNowHtml = `
+            <div class="divider"></div>
+            <div class="small-result price-line">ロング実売価格：${formatPrice(price500TaxIn)}円</div>
+            <div class="note">今見てるロング、わりとつよいです。</div>
+          `;
+        } else {
+          compareNowHtml = `
+            <div class="divider"></div>
+            <div class="small-result price-line">ロング実売価格：${formatPrice(price500TaxIn)}円</div>
+            <div class="note">今日はまだショートが粘ってます。</div>
+          `;
+        }
+      }
+
+      const updateHtml = isNewMin
+        ? `<div class="update-message">🔥 今までで一番安い！</div>`
+        : "";
+
+      resultEl.innerHTML = `
+        ${buildHeaderHtml(store, category, itemName)}
+        <div class="divider"></div>
+        <div class="small-result price-line">今回の価格：${formatPrice(price350TaxIn)}円</div>
+        <div class="main-result">${formatPrice(breakEven500)}円以下なら<br>ロングの方がお得！</div>
+        ${updateHtml}
+        ${compareNowHtml}
+        ${formatRecordHtml(record, saveEnabled)}
+      `;
+    }
+
+    function buildSaveOnlyResult() {
+      const store = storeEl.value;
+      const category = categoryEl.value;
+      const itemName = getSelectedItemName();
+      const taxType = taxTypeEl.value;
+      const priceAny = parseFloat(priceAnyEl.value);
+
+      if (!itemName) {
+        resultEl.innerHTML = `<div class="small-result">商品を選んでください。</div>`;
+        return;
+      }
+
+      if (isNaN(priceAny) || priceAny <= 0) {
+        resultEl.innerHTML = `<div class="small-result">価格をちゃんと入れてください。</div>`;
+        return;
+      }
+
+      const priceTaxIn = toTaxIncluded(priceAny, taxType);
+      const saved = saveRecord(category, itemName, store, priceTaxIn);
+      const record = saved.record;
+      const updateHtml = saved.isNewMin
+        ? `<div class="update-message">🔥 今までで一番安い！</div>`
+        : "";
+
+      resultEl.innerHTML = `
+        ${buildHeaderHtml(store, category, itemName)}
+        <div class="divider"></div>
+        <div class="save-mode">今回は ${formatPrice(priceTaxIn)}円！</div>
+        ${updateHtml}
+        ${formatRecordHtml(record, true)}
+      `;
+    }
+
+    function execute() {
+      saveLastSelection();
+
+      const category = categoryEl.value;
+      const mode = categories[category].mode;
+
+      if (mode === "save-only") {
+        buildSaveOnlyResult();
+      } else {
+        buildCompareResult();
+      }
     }
 
     function saveLastSelection() {
@@ -333,8 +554,7 @@
         store: storeEl.value,
         category: categoryEl.value,
         item: getSelectedItemName(),
-        taxType: taxTypeEl.value,
-        taxRate: taxRateEl.value
+        taxType: taxTypeEl.value
       };
       localStorage.setItem(LAST_SELECTION_KEY, JSON.stringify(data));
     }
@@ -364,171 +584,9 @@
         if (data.taxType) {
           taxTypeEl.value = data.taxType;
         }
-
-        if (data.taxRate) {
-          taxRateEl.value = data.taxRate;
-        }
       } catch (e) {
         console.error("前回選択の復元に失敗:", e);
       }
-    }
-
-    function readRecord(store, category, itemName) {
-      const key = getRecordKey(store, category, itemName);
-      const raw = localStorage.getItem(key);
-      if (!raw) return null;
-
-      try {
-        return JSON.parse(raw);
-      } catch {
-        return null;
-      }
-    }
-
-    function saveRecord(store, category, itemName, priceTaxIn) {
-      const key = getRecordKey(store, category, itemName);
-      const current = readRecord(store, category, itemName);
-
-      const next = current || {
-        min: priceTaxIn,
-        max: priceTaxIn,
-        updatedAt: new Date().toISOString()
-      };
-
-      next.min = Math.min(next.min, priceTaxIn);
-      next.max = Math.max(next.max, priceTaxIn);
-      next.updatedAt = new Date().toISOString();
-
-      localStorage.setItem(key, JSON.stringify(next));
-      return next;
-    }
-
-    function formatRecord(record) {
-      if (!record) {
-        return `
-          <div>過去最安：記録なし</div>
-          <div>過去最高：記録なし</div>
-        `;
-      }
-
-      return `
-        <div>過去最安：${round2(record.min)} 円</div>
-        <div>過去最高：${round2(record.max)} 円</div>
-      `;
-    }
-
-    function buildCompareResult() {
-      const store = storeEl.value;
-      const category = categoryEl.value;
-      const itemName = getSelectedItemName();
-      const mode = categories[category].mode;
-      const taxType = taxTypeEl.value;
-      const taxRate = parseFloat(taxRateEl.value);
-      const price350 = parseFloat(price350El.value);
-      const price500 = parseFloat(price500El.value);
-
-      if (isNaN(taxRate) || isNaN(price350) || price350 <= 0) {
-        resultEl.innerHTML = `<span class="warn">350mlの価格と税率を正しく入力してください。</span>`;
-        return;
-      }
-
-      const price350TaxIn = toTaxIncluded(price350, taxType, taxRate);
-      const unit350 = price350TaxIn / 350;
-      const per100350 = unit350 * 100;
-      const breakEven500 = unit350 * 500;
-
-      let record = null;
-      if (mode === "compare-save") {
-        record = saveRecord(store, category, itemName, price350TaxIn);
-      }
-
-      let compareNowHtml = "";
-      if (!isNaN(price500) && price500 > 0) {
-        const price500TaxIn = toTaxIncluded(price500, taxType, taxRate);
-        if (price500TaxIn <= breakEven500) {
-          compareNowHtml = `
-            <div class="divider"></div>
-            <div class="big good">500mlは割安です</div>
-            <div>500ml 実質価格：${round2(price500TaxIn)} 円</div>
-          `;
-        } else {
-          compareNowHtml = `
-            <div class="divider"></div>
-            <div class="big warn">350mlの方が割安です</div>
-            <div>500ml 実質価格：${round2(price500TaxIn)} 円</div>
-          `;
-        }
-      }
-
-      let saveNotice = "";
-      if (mode === "compare-only") {
-        saveNotice = `<div class="pill">その他：比較のみ（保存なし）</div>`;
-      } else {
-        saveNotice = `<div class="pill">保存対象</div>`;
-      }
-
-      resultEl.innerHTML = `
-        ${saveNotice}
-        <div><strong>${store}</strong> / <strong>${category}</strong>${itemName ? " / <strong>" + itemName + "</strong>" : ""}</div>
-        <div class="divider"></div>
-        <div>350ml 実質価格：${round2(price350TaxIn)} 円</div>
-        <div>100mlあたり：${round2(per100350)} 円</div>
-        <div class="big">500mlが <span class="good">${round2(breakEven500)} 円以下</span> なら割安です</div>
-        ${compareNowHtml}
-        <div class="divider"></div>
-        ${formatRecord(record)}
-      `;
-    }
-
-    function buildSaveOnlyResult() {
-      const store = storeEl.value;
-      const category = categoryEl.value;
-      const itemName = getSelectedItemName();
-      const taxType = taxTypeEl.value;
-      const taxRate = parseFloat(taxRateEl.value);
-      const priceAny = parseFloat(priceAnyEl.value);
-
-      if (!itemName) {
-        resultEl.innerHTML = `<span class="warn">商品を選択してください。</span>`;
-        return;
-      }
-
-      if (isNaN(taxRate) || isNaN(priceAny) || priceAny <= 0) {
-        resultEl.innerHTML = `<span class="warn">価格と税率を正しく入力してください。</span>`;
-        return;
-      }
-
-      const priceTaxIn = toTaxIncluded(priceAny, taxType, taxRate);
-      const record = saveRecord(store, category, itemName, priceTaxIn);
-
-      resultEl.innerHTML = `
-        <div class="pill">わるやつ：保存のみ</div>
-        <div><strong>${store}</strong> / <strong>${category}</strong> / <strong>${itemName}</strong></div>
-        <div class="divider"></div>
-        <div>今回の実質価格：${round2(priceTaxIn)} 円</div>
-        <div class="divider"></div>
-        ${formatRecord(record)}
-      `;
-    }
-
-    function execute() {
-      saveLastSelection();
-
-      const category = categoryEl.value;
-      const mode = categories[category].mode;
-
-      if (mode === "save-only") {
-        buildSaveOnlyResult();
-      } else {
-        buildCompareResult();
-      }
-    }
-
-    function clearPrices() {
-      price350El.value = "";
-      price500El.value = "";
-      priceAnyEl.value = "";
-      resultEl.innerHTML = "ここに結果が表示されます。";
     }
 
     function handleCategoryChange() {
@@ -553,10 +611,7 @@
       itemEl.addEventListener("change", handleItemChange);
       storeEl.addEventListener("change", saveLastSelection);
       taxTypeEl.addEventListener("change", saveLastSelection);
-      taxRateEl.addEventListener("change", saveLastSelection);
-
       calcBtnEl.addEventListener("click", execute);
-      clearBtnEl.addEventListener("click", clearPrices);
     }
 
     init();
