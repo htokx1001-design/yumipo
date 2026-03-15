@@ -1,620 +1,381 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>酒いくらメーター</title>
-  <style>
-    :root {
-      --bg: #ffd9e6;
-      --card: #fffafc;
-      --card-border: #ffc2d6;
-      --text: #4a2a35;
-      --sub: #8a6170;
-      --accent: #ff4f87;
-      --accent-dark: #e63f74;
-      --result: #ff8a3d;
-      --good: #d93a6a;
-      --line: #f3bfd0;
-      --shadow: rgba(219, 94, 139, 0.18);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    * {
-      box-sizing: border-box;
-    }
+<title>酒いくらメーター</title>
+<meta name="apple-mobile-web-app-title" content="酒いくら？">
+<link rel="apple-touch-icon" href="icon.png">
 
-    body {
-      margin: 0;
-      padding: 14px;
-      background:
-        radial-gradient(circle at top left, #ffeaf1 0%, transparent 35%),
-        radial-gradient(circle at top right, #ffd7e5 0%, transparent 30%),
-        linear-gradient(180deg, #ffd9e6 0%, #ffcfe0 100%);
-      color: var(--text);
-      font-family:
-        "Hiragino Maru Gothic ProN",
-        "Hiragino Sans",
-        "Yu Gothic UI",
-        -apple-system,
-        BlinkMacSystemFont,
-        sans-serif;
-    }
+<style>
 
-    .wrap {
-      max-width: 560px;
-      margin: 0 auto;
-    }
+:root{
+--bg:#ffd9e6;
+--card:#fffafc;
+--text:#4a2a35;
+--accent:#ff4f87;
+--accent2:#ff8a3d;
+}
 
-    .title-box {
-      text-align: center;
-      margin: 4px 0 12px;
-    }
+body{
+margin:0;
+padding:14px;
+background:linear-gradient(180deg,#ffd9e6,#ffcfe0);
+font-family:
+"Hiragino Maru Gothic ProN",
+"Hiragino Sans",
+-apple-system,
+BlinkMacSystemFont,
+sans-serif;
+}
 
-    h1 {
-      margin: 0;
-      font-size: 30px;
-      line-height: 1.2;
-      color: #d5336c;
-      letter-spacing: 0.03em;
-      text-shadow: 0 2px 0 rgba(255,255,255,0.55);
-    }
+.wrap{
+max-width:560px;
+margin:auto;
+}
 
-    .subtitle {
-      margin-top: 4px;
-      font-size: 14px;
-      color: #9b5a72;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-    }
+h1{
+text-align:center;
+margin:6px 0 0;
+font-size:30px;
+color:#d5336c;
+text-shadow:
+0 2px 0 rgba(255,255,255,0.7),
+0 4px 6px rgba(0,0,0,0.15);
+}
 
-    .card {
-      background: var(--card);
-      border: 2px solid var(--card-border);
-      border-radius: 20px;
-      padding: 14px;
-      box-shadow: 0 5px 14px var(--shadow);
-      margin-bottom: 12px;
-    }
+.subtitle{
+text-align:center;
+font-size:14px;
+color:#9b5a72;
+margin-bottom:10px;
+}
 
-    label {
-      display: block;
-      font-size: 14px;
-      font-weight: 800;
-      margin: 0 0 6px;
-      color: #8b4560;
-    }
+.card{
+background:var(--card);
+border-radius:18px;
+padding:14px;
+margin-bottom:12px;
+box-shadow:0 5px 12px rgba(0,0,0,0.1);
+}
 
-    select,
-    input,
-    button {
-      width: 100%;
-      border-radius: 14px;
-      font-size: 16px;
-      padding: 13px 12px;
-      margin: 0 0 12px;
-    }
+label{
+font-weight:700;
+font-size:14px;
+display:block;
+margin-bottom:4px;
+}
 
-    select,
-    input {
-      border: 2px solid #f1bfd0;
-      background: #fff;
-      color: var(--text);
-      appearance: none;
-      -webkit-appearance: none;
-    }
+select,input,button{
+width:100%;
+padding:12px;
+font-size:16px;
+border-radius:12px;
+margin-bottom:10px;
+box-sizing:border-box;
+}
 
-    select:focus,
-    input:focus {
-      outline: none;
-      border-color: #ff91b4;
-      box-shadow: 0 0 0 3px rgba(255, 145, 180, 0.18);
-    }
+select,input{
+border:2px solid #f1bfd0;
+}
 
-    button {
-      border: none;
-      background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
-      color: #fff;
-      font-weight: 900;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      box-shadow: 0 5px 12px rgba(255, 79, 135, 0.28);
-      margin-bottom: 0;
-    }
+button{
+border:none;
+background:var(--accent);
+color:white;
+font-weight:900;
+}
 
-    button:active {
-      transform: translateY(1px);
-    }
+button:active{
+transform:scale(.98);
+}
 
-    .hidden {
-      display: none;
-    }
+.main{
+text-align:center;
+font-size:24px;
+font-weight:900;
+color:var(--accent2);
+margin:10px 0;
+}
 
-    .result-head {
-      font-size: 17px;
-      font-weight: 900;
-      line-height: 1.7;
-      margin-bottom: 8px;
-      color: #7d3a53;
-    }
+.comment{
+text-align:center;
+font-size:20px;
+font-weight:900;
+margin:8px 0;
+}
 
-    .divider {
-      height: 2px;
-      background: linear-gradient(90deg, transparent 0%, #f3bfd0 12%, #f3bfd0 88%, transparent 100%);
-      margin: 10px 0;
-    }
+.update{
+text-align:center;
+font-size:18px;
+color:#d93a6a;
+font-weight:900;
+}
 
-    .main-result {
-      text-align: center;
-      font-size: 26px;
-      line-height: 1.35;
-      font-weight: 900;
-      color: var(--result);
-      margin: 8px 0 4px;
-      text-shadow: 0 2px 0 rgba(255,255,255,0.5);
-    }
+.divider{
+height:1px;
+background:#f3bfd0;
+margin:8px 0;
+}
 
-    .update-message {
-      text-align: center;
-      font-size: 20px;
-      font-weight: 900;
-      color: var(--good);
-      margin: 8px 0;
-    }
+.small{
+font-size:15px;
+}
 
-    .small-result {
-      font-size: 16px;
-      line-height: 1.8;
-    }
+.hidden{
+display:none;
+}
 
-    .price-line {
-      font-weight: 700;
-      color: #7b4960;
-    }
-
-    .save-mode {
-      text-align: center;
-      font-size: 22px;
-      line-height: 1.4;
-      font-weight: 900;
-      color: var(--result);
-      margin: 6px 0 2px;
-    }
-
-    .note {
-      text-align: center;
-      font-size: 14px;
-      color: var(--sub);
-      margin-top: 4px;
-    }
-  </style>
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="title-box">
-      <h1>🍺 酒いくらメーター 🍋</h1>
-      <div class="subtitle">〜 ロングは敵か味方か 〜</div>
-    </div>
-
-    <div class="card">
-      <label for="store">スーパー</label>
-      <select id="store"></select>
-
-      <label for="category">種類</label>
-      <select id="category"></select>
-
-      <div id="itemWrap">
-        <label for="item">味 / 商品</label>
-        <select id="item"></select>
-      </div>
-
-      <label for="taxType">価格表示</label>
-      <select id="taxType">
-        <option value="taxIncluded">税込</option>
-        <option value="taxExcluded">税抜</option>
-      </select>
-
-      <div id="price350Wrap">
-        <label for="price350">350の価格</label>
-        <input id="price350" type="number" inputmode="decimal" placeholder="例：108" />
-      </div>
-
-      <div id="price500Wrap">
-        <label for="price500">ロングの価格（任意）</label>
-        <input id="price500" type="number" inputmode="decimal" placeholder="入れるとその場で比較できる" />
-      </div>
-
-      <div id="priceAnyWrap" class="hidden">
-        <label for="priceAny">価格</label>
-        <input id="priceAny" type="number" inputmode="decimal" placeholder="例：998" />
-      </div>
-
-      <button id="calcBtn" type="button">計算 / 保存</button>
-    </div>
-
-    <div class="card">
-      <div id="result" class="small-result">ここに結果がでます。</div>
-    </div>
-  </div>
-
-  <script>
-    const stores = [
-      "サンプラ",
-      "ライフ",
-      "ドンキ",
-      "ベス",
-      "万代",
-      "油甚",
-      "サンディ",
-      "コープ"
-    ];
-
-    const categories = {
-      "ほんしぼ": {
-        mode: "compare-save",
-        items: ["グレフル", "レモン", "Pグレフル", "オレンジ", "その他"]
-      },
-      "氷結": {
-        mode: "compare-save",
-        items: ["グレフル", "レモン", "ゆず", "シャルドネ", "その他"]
-      },
-      "-196": {
-        mode: "compare-save",
-        items: ["レモン", "Sマスカット", "ラフランス", "Vオレンジ", "Pグレフル", "その他"]
-      },
-      "ドライ": {
-        mode: "compare-save",
-        items: []
-      },
-      "その他": {
-        mode: "compare-only",
-        items: []
-      },
-      "わるやつ": {
-        mode: "save-only",
-        items: ["濃いめのグレフル1.8L", "タコハイ500ml", "氷彩500ml", "ウォッカ"]
-      }
-    };
-
-    const storeEl = document.getElementById("store");
-    const categoryEl = document.getElementById("category");
-    const itemWrapEl = document.getElementById("itemWrap");
-    const itemEl = document.getElementById("item");
-    const taxTypeEl = document.getElementById("taxType");
-    const price350WrapEl = document.getElementById("price350Wrap");
-    const price350El = document.getElementById("price350");
-    const price500WrapEl = document.getElementById("price500Wrap");
-    const price500El = document.getElementById("price500");
-    const priceAnyWrapEl = document.getElementById("priceAnyWrap");
-    const priceAnyEl = document.getElementById("priceAny");
-    const calcBtnEl = document.getElementById("calcBtn");
-    const resultEl = document.getElementById("result");
-
-    const LAST_SELECTION_KEY = "sakeMeter_lastSelection_v2";
-    const RECORD_PREFIX = "sakeMeter_record_v2__";
-    const TAX_RATE = 10;
-
-    function round2(num) {
-      return Math.round(num * 100) / 100;
-    }
-
-    function formatPrice(num) {
-      return round2(num).toFixed(2).replace(/\.00$/, "");
-    }
-
-    function toTaxIncluded(price, taxType) {
-      if (taxType === "taxIncluded") return price;
-      return price * 1.1;
-    }
-
-    function populateStores() {
-      storeEl.innerHTML = stores.map(store => `<option value="${store}">${store}</option>`).join("");
-    }
-
-    function populateCategories() {
-      categoryEl.innerHTML = Object.keys(categories)
-        .map(category => `<option value="${category}">${category}</option>`)
-        .join("");
-    }
-
-    function populateItems() {
-      const category = categoryEl.value;
-      const items = categories[category].items;
-
-      if (!items || items.length === 0) {
-        itemWrapEl.classList.add("hidden");
-        itemEl.innerHTML = "";
-        return;
-      }
-
-      itemWrapEl.classList.remove("hidden");
-      itemEl.innerHTML = items.map(item => `<option value="${item}">${item}</option>`).join("");
-    }
-
-    function updateModeUI() {
-      const category = categoryEl.value;
-      const mode = categories[category].mode;
-
-      if (mode === "save-only") {
-        price350WrapEl.classList.add("hidden");
-        price500WrapEl.classList.add("hidden");
-        priceAnyWrapEl.classList.remove("hidden");
-      } else {
-        price350WrapEl.classList.remove("hidden");
-        price500WrapEl.classList.remove("hidden");
-        priceAnyWrapEl.classList.add("hidden");
-      }
-    }
-
-    function getSelectedItemName() {
-      const category = categoryEl.value;
-      const items = categories[category].items;
-      if (!items || items.length === 0) return "";
-      return itemEl.value;
-    }
-
-    function shouldSave(category, itemName) {
-      if (category === "その他") return false;
-      if (category === "わるやつ") return true;
-      if (itemName === "その他") return false;
-      return true;
-    }
-
-    function getRecordKey(category, itemName) {
-      return `${RECORD_PREFIX}${category}__${itemName || "noitem"}`;
-    }
-
-    function readRecord(category, itemName) {
-      const key = getRecordKey(category, itemName);
-      const raw = localStorage.getItem(key);
-      if (!raw) return null;
-
-      try {
-        return JSON.parse(raw);
-      } catch {
-        return null;
-      }
-    }
-
-    function saveRecord(category, itemName, store, priceTaxIn) {
-      const key = getRecordKey(category, itemName);
-      const current = readRecord(category, itemName);
-
-      let isNewMin = false;
-
-      if (!current) {
-        const first = {
-          min: priceTaxIn,
-          minStore: store,
-          max: priceTaxIn,
-          maxStore: store,
-          updatedAt: new Date().toISOString()
-        };
-        localStorage.setItem(key, JSON.stringify(first));
-        return { record: first, isNewMin: true };
-      }
-
-      const next = { ...current };
-
-      if (priceTaxIn < next.min) {
-        next.min = priceTaxIn;
-        next.minStore = store;
-        isNewMin = true;
-      }
-
-      if (priceTaxIn > next.max) {
-        next.max = priceTaxIn;
-        next.maxStore = store;
-      }
-
-      next.updatedAt = new Date().toISOString();
-      localStorage.setItem(key, JSON.stringify(next));
-
-      return { record: next, isNewMin };
-    }
-
-    function formatRecordHtml(record, saveEnabled) {
-      if (!saveEnabled) {
-        return `
-          <div class="divider"></div>
-          <div class="small-result">記録はしないモードです。</div>
-        `;
-      }
-
-      if (!record) {
-        return `
-          <div class="divider"></div>
-          <div class="small-result">
-            <div>過去最安：記録なし</div>
-            <div>過去最高：記録なし</div>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="divider"></div>
-        <div class="small-result">
-          <div>過去最安：${formatPrice(record.min)}円　${record.minStore}</div>
-          <div>過去最高：${formatPrice(record.max)}円　${record.maxStore}</div>
-        </div>
-      `;
-    }
-
-    function buildHeaderHtml(store, category, itemName) {
-      const itemPart = itemName ? ` / ${itemName}` : "";
-      return `<div class="result-head">${store} / ${category}${itemPart}</div>`;
-    }
-
-    function buildCompareResult() {
-      const store = storeEl.value;
-      const category = categoryEl.value;
-      const itemName = getSelectedItemName();
-      const taxType = taxTypeEl.value;
-      const price350 = parseFloat(price350El.value);
-      const price500 = parseFloat(price500El.value);
-
-      if (isNaN(price350) || price350 <= 0) {
-        resultEl.innerHTML = `<div class="small-result">350の価格をちゃんと入れてください。</div>`;
-        return;
-      }
-
-      const price350TaxIn = toTaxIncluded(price350, taxType);
-      const breakEven500 = (price350TaxIn / 350) * 500;
-
-      const saveEnabled = shouldSave(category, itemName);
-      let record = readRecord(category, itemName);
-      let isNewMin = false;
-
-      if (saveEnabled) {
-        const saved = saveRecord(category, itemName, store, price350TaxIn);
-        record = saved.record;
-        isNewMin = saved.isNewMin;
-      }
-
-      let compareNowHtml = "";
-      if (!isNaN(price500) && price500 > 0) {
-        const price500TaxIn = toTaxIncluded(price500, taxType);
-        if (price500TaxIn <= breakEven500) {
-          compareNowHtml = `
-            <div class="divider"></div>
-            <div class="small-result price-line">ロング実売価格：${formatPrice(price500TaxIn)}円</div>
-            <div class="note">今見てるロング、わりとつよいです。</div>
-          `;
-        } else {
-          compareNowHtml = `
-            <div class="divider"></div>
-            <div class="small-result price-line">ロング実売価格：${formatPrice(price500TaxIn)}円</div>
-            <div class="note">今日はまだショートが粘ってます。</div>
-          `;
-        }
-      }
-
-      const updateHtml = isNewMin
-        ? `<div class="update-message">🔥 今までで一番安い！</div>`
-        : "";
-
-      resultEl.innerHTML = `
-        ${buildHeaderHtml(store, category, itemName)}
-        <div class="divider"></div>
-        <div class="small-result price-line">今回の価格：${formatPrice(price350TaxIn)}円</div>
-        <div class="main-result">${formatPrice(breakEven500)}円以下なら<br>ロングの方がお得！</div>
-        ${updateHtml}
-        ${compareNowHtml}
-        ${formatRecordHtml(record, saveEnabled)}
-      `;
-    }
-
-    function buildSaveOnlyResult() {
-      const store = storeEl.value;
-      const category = categoryEl.value;
-      const itemName = getSelectedItemName();
-      const taxType = taxTypeEl.value;
-      const priceAny = parseFloat(priceAnyEl.value);
-
-      if (!itemName) {
-        resultEl.innerHTML = `<div class="small-result">商品を選んでください。</div>`;
-        return;
-      }
-
-      if (isNaN(priceAny) || priceAny <= 0) {
-        resultEl.innerHTML = `<div class="small-result">価格をちゃんと入れてください。</div>`;
-        return;
-      }
-
-      const priceTaxIn = toTaxIncluded(priceAny, taxType);
-      const saved = saveRecord(category, itemName, store, priceTaxIn);
-      const record = saved.record;
-      const updateHtml = saved.isNewMin
-        ? `<div class="update-message">🔥 今までで一番安い！</div>`
-        : "";
-
-      resultEl.innerHTML = `
-        ${buildHeaderHtml(store, category, itemName)}
-        <div class="divider"></div>
-        <div class="save-mode">今回は ${formatPrice(priceTaxIn)}円！</div>
-        ${updateHtml}
-        ${formatRecordHtml(record, true)}
-      `;
-    }
-
-    function execute() {
-      saveLastSelection();
-
-      const category = categoryEl.value;
-      const mode = categories[category].mode;
-
-      if (mode === "save-only") {
-        buildSaveOnlyResult();
-      } else {
-        buildCompareResult();
-      }
-    }
-
-    function saveLastSelection() {
-      const data = {
-        store: storeEl.value,
-        category: categoryEl.value,
-        item: getSelectedItemName(),
-        taxType: taxTypeEl.value
-      };
-      localStorage.setItem(LAST_SELECTION_KEY, JSON.stringify(data));
-    }
-
-    function restoreLastSelection() {
-      const raw = localStorage.getItem(LAST_SELECTION_KEY);
-      if (!raw) return;
-
-      try {
-        const data = JSON.parse(raw);
-
-        if (data.store && stores.includes(data.store)) {
-          storeEl.value = data.store;
-        }
-
-        if (data.category && categories[data.category]) {
-          categoryEl.value = data.category;
-        }
-
-        populateItems();
-
-        const items = categories[categoryEl.value].items;
-        if (data.item && items.includes(data.item)) {
-          itemEl.value = data.item;
-        }
-
-        if (data.taxType) {
-          taxTypeEl.value = data.taxType;
-        }
-      } catch (e) {
-        console.error("前回選択の復元に失敗:", e);
-      }
-    }
-
-    function handleCategoryChange() {
-      populateItems();
-      updateModeUI();
-      saveLastSelection();
-    }
-
-    function handleItemChange() {
-      saveLastSelection();
-    }
-
-    function init() {
-      populateStores();
-      populateCategories();
-      populateItems();
-      restoreLastSelection();
-      populateItems();
-      updateModeUI();
-
-      categoryEl.addEventListener("change", handleCategoryChange);
-      itemEl.addEventListener("change", handleItemChange);
-      storeEl.addEventListener("change", saveLastSelection);
-      taxTypeEl.addEventListener("change", saveLastSelection);
-      calcBtnEl.addEventListener("click", execute);
-    }
-
-    init();
-  </script>
+
+<div class="wrap">
+
+<h1>🍺 酒いくらメーター 🍋</h1>
+<div class="subtitle">〜 ロングは敵か味方か 〜</div>
+
+<div class="card">
+
+<label>スーパー</label>
+<select id="store"></select>
+
+<label>種類</label>
+<select id="category"></select>
+
+<div id="itemWrap">
+<label>味 / 商品</label>
+<select id="item"></select>
+</div>
+
+<label>価格表示</label>
+<select id="tax">
+<option value="in">税込</option>
+<option value="ex">税抜</option>
+</select>
+
+<div id="p350wrap">
+<label>350の価格</label>
+<input id="p350" type="number" placeholder="108">
+</div>
+
+<div id="p500wrap">
+<label>ロング価格（任意）</label>
+<input id="p500" type="number" placeholder="145">
+</div>
+
+<div id="panywrap" class="hidden">
+<label>価格</label>
+<input id="pany" type="number">
+</div>
+
+<button onclick="run()">計算 / 保存</button>
+
+</div>
+
+<div class="card">
+<div id="result">ここに結果がでます。</div>
+</div>
+
+</div>
+
+<script>
+
+const stores=["サンプラ","ライフ","ドンキ","ベス","万代","油甚","サンディ","コープ"]
+
+const categories={
+"ほんしぼ":{mode:"compare",items:["グレフル","レモン","Pグレフル","オレンジ","その他"]},
+"氷結":{mode:"compare",items:["グレフル","レモン","ゆず","シャルドネ","その他"]},
+"-196":{mode:"compare",items:["レモン","Sマスカット","ラフランス","Vオレンジ","Pグレフル","その他"]},
+"ドライ":{mode:"compare",items:[]},
+"その他":{mode:"compareOnly",items:[]},
+"わるやつ":{mode:"saveOnly",items:["濃いめのグレフル1.8L","タコハイ500ml","氷彩500ml","ウォッカ"]}
+}
+
+const longWin=[
+"🍻 ロングいけ！",
+"🍺 今日はロングの日！",
+"💪 ロング、強し！",
+"😏 もうそれロングでええやん！"
+]
+
+const shortWin=[
+"🍋 今日はショート！",
+"🍋 まだ350が粘る！",
+"🍺 ロング、まだ早い！",
+"🏆 今回はちび缶勝利！"
+]
+
+const draw=[
+"🤝 ほぼ互角！",
+"🤔 どっちでもええやん！",
+"😅 好きな方でどうぞ！",
+"🪙 コイントス案件！"
+]
+
+const storeEl=document.getElementById("store")
+const catEl=document.getElementById("category")
+const itemEl=document.getElementById("item")
+const itemWrap=document.getElementById("itemWrap")
+const p350=document.getElementById("p350")
+const p500=document.getElementById("p500")
+const pany=document.getElementById("pany")
+const p350wrap=document.getElementById("p350wrap")
+const p500wrap=document.getElementById("p500wrap")
+const panywrap=document.getElementById("panywrap")
+const tax=document.getElementById("tax")
+
+stores.forEach(s=>{
+storeEl.innerHTML+=`<option>${s}</option>`
+})
+
+Object.keys(categories).forEach(c=>{
+catEl.innerHTML+=`<option>${c}</option>`
+})
+
+function updateItems(){
+let c=catEl.value
+let items=categories[c].items
+
+if(items.length==0){
+itemWrap.classList.add("hidden")
+itemEl.innerHTML=""
+}else{
+itemWrap.classList.remove("hidden")
+itemEl.innerHTML=""
+items.forEach(i=>{
+itemEl.innerHTML+=`<option>${i}</option>`
+})
+}
+
+if(categories[c].mode=="saveOnly"){
+p350wrap.classList.add("hidden")
+p500wrap.classList.add("hidden")
+panywrap.classList.remove("hidden")
+}else{
+p350wrap.classList.remove("hidden")
+p500wrap.classList.remove("hidden")
+panywrap.classList.add("hidden")
+}
+}
+
+catEl.onchange=updateItems
+updateItems()
+
+function taxIn(v){
+if(tax.value=="in") return v
+return v*1.1
+}
+
+function rand(a){
+return a[Math.floor(Math.random()*a.length)]
+}
+
+function run(){
+
+let store=storeEl.value
+let cat=catEl.value
+let item=itemEl.value||""
+let mode=categories[cat].mode
+
+if(mode=="saveOnly"){
+
+let price=taxIn(parseFloat(pany.value))
+if(!price) return
+
+let key=cat+"_"+item
+let data=JSON.parse(localStorage.getItem(key)||"{}")
+
+let newMin=false
+
+if(!data.min || price<data.min){
+data.min=price
+data.minStore=store
+newMin=true
+}
+
+if(!data.max || price>data.max){
+data.max=price
+data.maxStore=store
+}
+
+localStorage.setItem(key,JSON.stringify(data))
+
+document.getElementById("result").innerHTML=`
+<div class="small">${store} / ${cat} / ${item}</div>
+<div class="divider"></div>
+<div class="main">${price.toFixed(0)}円</div>
+${newMin?'<div class="update">🔥 今までで一番安い！</div>':''}
+<div class="divider"></div>
+<div class="small">
+過去最安：${data.min?data.min.toFixed(0):"-"}円 ${data.minStore||""}<br>
+過去最高：${data.max?data.max.toFixed(0):"-"}円 ${data.maxStore||""}
+</div>
+`
+return
+}
+
+let v350=taxIn(parseFloat(p350.value))
+if(!v350) return
+
+let border=v350/350*500
+
+let v500=taxIn(parseFloat(p500.value))
+
+let comment=""
+if(v500){
+
+if(Math.abs(v500-border)<3){
+comment=rand(draw)
+}else if(v500<=border){
+comment=rand(longWin)
+}else{
+comment=rand(shortWin)
+}
+
+comment=`<div class="comment">${comment}</div>`
+}
+
+let save=(cat!="その他" && item!="その他")
+
+let key=cat+"_"+item
+let data=JSON.parse(localStorage.getItem(key)||"{}")
+let newMin=false
+
+if(save){
+
+if(!data.min || v350<data.min){
+data.min=v350
+data.minStore=store
+newMin=true
+}
+
+if(!data.max || v350>data.max){
+data.max=v350
+data.maxStore=store
+}
+
+localStorage.setItem(key,JSON.stringify(data))
+}
+
+document.getElementById("result").innerHTML=`
+<div class="small">${store} / ${cat}${item?(" / "+item):""}</div>
+<div class="divider"></div>
+<div class="main">${border.toFixed(0)}円以下なら<br>ロングの方がお得！</div>
+${comment}
+${newMin?'<div class="update">🔥 今までで一番安い！</div>':''}
+<div class="divider"></div>
+<div class="small">
+過去最安：${data.min?data.min.toFixed(0):"-"}円 ${data.minStore||""}<br>
+過去最高：${data.max?data.max.toFixed(0):"-"}円 ${data.maxStore||""}
+</div>
+`
+
+}
+
+</script>
+
 </body>
 </html>
